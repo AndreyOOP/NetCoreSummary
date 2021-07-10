@@ -1,19 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fundamentals.ErrorHandling
 {
     [ApiController]
-    //[Route("[controller]")]
     public class ErrorHandlerController : ControllerBase
     {
-        [Route("/ErrorHandlerAction")]
-        public void GetStatusCode()
+        [Route("routing-attributes/ErrorHandlerAction")]
+        public IActionResult ExceptionHandler()
         {
-            
+            var exceptionHandler = HttpContext.Features.Get<IExceptionHandlerFeature>();
+
+            if (exceptionHandler.Error is ArgumentException)
+                return Content($"Exception {nameof(ArgumentException)}");
+
+            if (exceptionHandler.Error is Exception)
+                return Content($"Exception {nameof(Exception)}");
+
+            return StatusCode(200);
         }
     }
 }

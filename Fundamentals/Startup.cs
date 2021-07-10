@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Fundamentals
@@ -16,8 +17,11 @@ namespace Fundamentals
         {
             app.MapWhen(
                 context => context.Request.Path.StartsWithSegments(new PathString("/routing-attributes")), // important to start from /
-                application => { 
-                    application.UseRouting(); 
+                application => {
+                    application.UseExceptionHandler("/routing-attributes/ErrorHandlerAction"); // handle exceptions via separate exception handler
+                    //application.UseStatusCodePages(); just adds text message with status code description
+                    
+                    application.UseRouting();
                     application.UseEndpoints(endpoint => endpoint.MapControllers()); 
                 }
             );
@@ -25,6 +29,7 @@ namespace Fundamentals
             app.MapWhen(
                 context => context.Request.Path.StartsWithSegments(new PathString("/routing-endpoints")),
                 application => {
+                    
                     application.UseRouting();
                     application.UseEndpoints(
                         endpoint => {
@@ -40,11 +45,32 @@ namespace Fundamentals
                                 "/routing-endpoints/post-sample",
                                 async context => await context.Response.WriteAsync("post-sample delegate executed")
                             );
-                            // ToDo: add sample of custom routing
                             // ToDo: add routing constraints
                         }
                     ) ;
                 }
+            );
+
+            // Custom routing sample (note - no app.UseRouting(); & app.UseEndpoints()
+            app.MapWhen(
+                context => context.Request.Path.StartsWithSegments(new PathString("/routing-custom")),
+                application => {
+                    var routeHandler = new RouteHandler(context => {
+                        var routeValues = context.GetRouteData().Values;
+                        return context.Response.WriteAsync(
+                            $"Hello! Route values: {string.Join(", ", routeValues)}");
+                    });
+                    var routeBuilder = new RouteBuilder(application, routeHandler);
+                    routeBuilder.MapRoute("custom", "/routing-custom/route");
+                    routeBuilder.MapGet("/routing-custom/get", context => context.Response.WriteAsync("Mapped Get Action") );
+                    routeBuilder.MapPost("/routing-custom/post/{id}", context => {
+                        var id = context.GetRouteValue("id");
+                        return context.Response.WriteAsync($"Mapped Post Action {id}"); 
+                    });
+                    var routes = routeBuilder.Build();
+                    app.UseRouter(routes);
+                }
+                
                 // routing without endpoints
                 //services.AddMvc(mvcOtions => { mvcOtions.EnableEndpointRouting = false; }); // disable endpoint routing
                 //application.UseMvc(routes =>
@@ -54,7 +80,6 @@ namespace Fundamentals
                 //        template: "{controller=Home}/{action=Index}/{id?}");
                 //});
             );
-
 
             // **********************************************************************
 
