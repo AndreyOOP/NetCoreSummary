@@ -1,8 +1,10 @@
+using Fundamentals.HttpClients;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Fundamentals
 {
@@ -11,6 +13,15 @@ namespace Fundamentals
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // HttpClient samples:
+            // Named client
+            services.AddHttpClient("Dogs", conf => {
+                conf.BaseAddress = new Uri("https://dog.ceo/api/breeds/"); // Important: place / at the end
+            });
+            // typed client
+            services.AddHttpClient<CurrencyClient>();
+            // Todo: add interface sample, add header prpagation, add post request sample & SendAsync sample
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -80,6 +91,9 @@ namespace Fundamentals
                 //        template: "{controller=Home}/{action=Index}/{id?}");
                 //});
             );
+
+            app.UseRouting();
+            app.UseEndpoints(endpoint => endpoint.MapControllers());
 
             // **********************************************************************
 

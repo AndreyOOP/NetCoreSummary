@@ -14,7 +14,7 @@ namespace Fundamentals.Controllers
             return $"Controller {nameof(ControllerEndpointRouting)}, action {nameof(Route)} executed";
         }
 
-        // Get & Put method onstraint
+        // Get & Put method constraint
         [HttpGet]
         [HttpPut]
         public string TestRoute(string id)
