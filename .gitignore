@@ -5,3 +5,9 @@
 /.vs/NetCoreSummary
 /NetCoreSummary/bin/Debug/netcoreapp3.1
 /NetCoreSummary/obj
+/Fundamentals/bin/Debug/netcoreapp3.1
+/Fundamentals/obj
+/Fundamentals/bin/Release/netcoreapp3.1
+/NetCoreSummary/bin/Release/netcoreapp3.1
+/Sessions/bin
+/Sessions/obj
