@@ -12,11 +12,13 @@ namespace Fundamentals.Controllers
     {
         private HttpClient dogsClient;
         private HttpClient currencyClient;
+        private HttpClient currencyClientImpl;
 
-        public HttpClientFactorySamples(IHttpClientFactory factory, CurrencyClient currencyClient)
+        public HttpClientFactorySamples(IHttpClientFactory factory, CurrencyClient currencyClient, ICurrencyClient currencyClientImpl)
         {
             dogsClient = factory.CreateClient("Dogs");
             this.currencyClient = currencyClient.Client;
+            this.currencyClientImpl = currencyClientImpl.Client;
         }
 
         // the sample of NAMED http client usage
@@ -40,6 +42,16 @@ namespace Fundamentals.Controllers
             };
         }
 
+        [HttpGet("currency-list-impl")]
+        public async Task<IActionResult> GetCurrenciesImpl()
+        {
+            var resposne = await currencyClientImpl.GetAsync("currencies.json");
+            resposne.EnsureSuccessStatusCode();
+            return new ContentResult
+            {
+                Content = await resposne.Content.ReadAsStringAsync()
+            };
+        }
     }
 
     public class DogImg

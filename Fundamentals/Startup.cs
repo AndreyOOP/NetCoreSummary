@@ -21,6 +21,7 @@ namespace Fundamentals
             });
             // typed client
             services.AddHttpClient<CurrencyClient>();
+            services.AddHttpClient<ICurrencyClient, CurrencyClientImpl>();
             // Todo: add interface sample, add header prpagation, add post request sample & SendAsync sample
         }
 
