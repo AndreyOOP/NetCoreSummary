@@ -13,7 +13,7 @@ namespace Sessions
 
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromSeconds(60);
+                options.IdleTimeout = TimeSpan.FromSeconds(60); // session state is saved for 1 minute, after this values from HttpContext.Session are reset
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });

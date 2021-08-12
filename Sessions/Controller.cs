@@ -17,5 +17,26 @@ namespace Sessions
             
             return $"Previous cookie value {cookieValue}, new cookie value {newValue}";
         }
+
+        // you can see that sessions on different browers are independant on each other
+        [HttpGet("session")]
+        public string SessionSample(SessionRequest request)
+        {
+            var currentSessionValue = HttpContext.Session.GetString(request.Key);
+            
+            HttpContext.Session.SetString(request.Key, request.Value);
+            
+            return $"Session value is '{currentSessionValue}'";
+        }
+    }
+
+    // note that attributes could be used like below
+    public class SessionRequest
+    {
+        [FromQuery]
+        public string Key { get; set; }
+        
+        [FromQuery]
+        public string Value { get; set; }
     }
 }
